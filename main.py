@@ -12,14 +12,13 @@ driver = webdriver.Edge(options=options)
 
 driver.get("https://www.remax.ca/bc/vancouver-real-estate-agents?pageNumber=1")
 title = driver.title
-driver.implicitly_wait(0.5)
 
 index = 1
+driver.implicitly_wait(1)
+css_selector = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
 
 
 def send_message():
-    css_selector = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
-
     # Press contact button
     contact_button = driver.find_element(by=By.CSS_SELECTOR, value=css_selector)
     contact_button.click()
@@ -48,8 +47,18 @@ def send_message():
 
     message_entry.send_keys(message)
 
+    close_button = driver.find_element(
+        by=By.CSS_SELECTOR,
+        value='[aria-label="Close"]',
+    )
+    close_button.click()
+
 
 send_message()
+
+if driver.find_elements(By.CSS_SELECTOR, css_selector):
+    index += 1
+    send_message()
 
 time.sleep(5)
 
