@@ -15,11 +15,11 @@ title = driver.title
 
 index = 1
 driver.implicitly_wait(1)
-css_selector = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
 
 
-def send_message():
+def send_message(index):
     # Press contact button
+    css_selector = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
     contact_button = driver.find_element(by=By.CSS_SELECTOR, value=css_selector)
     contact_button.click()
 
@@ -53,12 +53,15 @@ def send_message():
     )
     close_button.click()
 
+    if driver.find_elements(By.CSS_SELECTOR, css_selector):
+        index += 1
+        print(index)
+        send_message(index)
+    else:
+        print("error")
 
-send_message()
 
-if driver.find_elements(By.CSS_SELECTOR, css_selector):
-    index += 1
-    send_message()
+send_message(index)
 
 time.sleep(5)
 
