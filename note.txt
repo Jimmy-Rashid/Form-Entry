@@ -1,0 +1,3 @@
+record all names onto a sheet
+browse through sheet to check if messaged already
+if not, then message

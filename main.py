@@ -18,9 +18,13 @@ driver.implicitly_wait(1)
 
 
 def send_message(index):
+    # Get realtor's name
+    realtor_name_css = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_content__PJCfJ > a > div.agent-search-card_textContent__lMG47 > div.agent-search-card_name__FKvox"
+    realtor_name = driver.find_element(by=By.CSS_SELECTOR, value=realtor_name_css)
+
     # Press contact button
-    css_selector = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
-    contact_button = driver.find_element(by=By.CSS_SELECTOR, value=css_selector)
+    contact_button_css = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
+    contact_button = driver.find_element(by=By.CSS_SELECTOR, value=contact_button_css)
     contact_button.click()
 
     # Enter name
@@ -30,6 +34,10 @@ def send_message(index):
     # Enter email
     email_entry = driver.find_element(by=By.NAME, value="email")
     email_entry.send_keys("kevinbarrett@packbuildings.com")
+
+    # Uncheck "Looking to buy" button
+    buy_button = driver.find_element(by=By.NAME, value="buy")
+    buy_button.click()
 
     # Find message box
     message_entry = driver.find_element(by=By.NAME, value="message")
@@ -53,9 +61,8 @@ def send_message(index):
     )
     close_button.click()
 
-    if driver.find_elements(By.CSS_SELECTOR, css_selector):
+    if driver.find_elements(By.CSS_SELECTOR, contact_button_css):
         index += 1
-        print(index)
         send_message(index)
     else:
         print("error")
@@ -63,6 +70,6 @@ def send_message(index):
 
 send_message(index)
 
-time.sleep(5)
+time.sleep(600)
 
 driver.quit()
