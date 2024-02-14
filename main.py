@@ -18,9 +18,33 @@ driver.implicitly_wait(1)
 
 
 def send_message(index):
-    # Get realtor's name
-    realtor_name_css = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_content__PJCfJ > a > div.agent-search-card_textContent__lMG47 > div.agent-search-card_name__FKvox"
-    realtor_name = driver.find_element(by=By.CSS_SELECTOR, value=realtor_name_css)
+    # Find the realtor's information
+    card_parent_css = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_content__PJCfJ > a > div.agent-search-card_textContent__lMG47"
+    card_parent = driver.find_element(by=By.CSS_SELECTOR, value=card_parent_css)
+
+    realtor_name_css = card_parent.find_element(
+        by=By.CLASS_NAME, value="agent-search-card_name__FKvox"
+    )
+    realtor_name = realtor_name_css.text
+    print(realtor_name)
+
+    realtor_title_css = card_parent.find_element(
+        by=By.CLASS_NAME, value="agent-search-card_title__rqNB0"
+    )
+    realtor_title = realtor_title_css.text
+    print(realtor_title)
+
+    realtor_city_css = card_parent.find_element(
+        by=By.CLASS_NAME, value="agent-search-card_city__dFVTO"
+    )
+    realtor_city = realtor_city_css.text
+    print(realtor_city)
+
+    realtor_office_css = card_parent.find_element(
+        by=By.CLASS_NAME, value="agent-search-card_office__Wqx3q"
+    )
+    realtor_office = realtor_office_css.text
+    print(realtor_office)
 
     # Press contact button
     contact_button_css = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
@@ -55,21 +79,21 @@ def send_message(index):
 
     message_entry.send_keys(message)
 
-    close_button = driver.find_element(
-        by=By.CSS_SELECTOR,
-        value='[aria-label="Close"]',
-    )
-    close_button.click()
+    # close_button = driver.find_element(
+    #     by=By.CSS_SELECTOR,
+    #     value='[aria-label="Close"]',
+    # )
+    # close_button.click()
 
-    if driver.find_elements(By.CSS_SELECTOR, contact_button_css):
-        index += 1
-        send_message(index)
-    else:
-        print("error")
+    # if driver.find_elements(By.CSS_SELECTOR, contact_button_css):
+    #     index += 1
+    #     send_message(index)
+    # else:
+    #     print("error")
 
 
 send_message(index)
 
-time.sleep(600)
+time.sleep(10)
 
 driver.quit()
