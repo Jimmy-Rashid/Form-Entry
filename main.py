@@ -1,14 +1,26 @@
 from selenium import webdriver
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.edge.service import Service as EdgeService
+import pandas as amogus
 import time
 
+list_of_crewmates = amogus.read_excel("test.xlsx")
+list_parser = amogus.DataFrame(list_of_crewmates[["Name"]])
+
+print(list_parser)
+
 options = webdriver.EdgeOptions()
+options.add_experimental_option("excludeSwitches", ["enable-logging"])
 options.add_argument("--enable-chrome-browser-cloud-management")
 options.add_argument("--remote-allow-origins=*")
 options.add_argument("--disable-extensions")
+options.add_argument("--guest")
 
-driver = webdriver.Edge(options=options)
+driver = webdriver.Edge(
+    service=EdgeService(EdgeChromiumDriverManager().install()), options=options
+)
 
 driver.get("https://www.remax.ca/bc/vancouver-real-estate-agents?pageNumber=1")
 title = driver.title
@@ -67,8 +79,8 @@ def send_message(index):
     message_entry = driver.find_element(by=By.NAME, value="message")
     message_copy = message_entry.text
     words = message_copy.split(" ")[:2]
-    message_entry.send_keys(Keys.CONTROL + "a")  # Select all text
-    message_entry.send_keys(Keys.DELETE)  # Delete selected text
+    message_entry.send_keys(Keys.CONTROL + "a")
+    message_entry.send_keys(Keys.DELETE)
 
     greeting = " ".join(words)
     message = (
@@ -89,7 +101,19 @@ def send_message(index):
     #     index += 1
     #     send_message(index)
     # else:
-    #     print("error")
+    #     print("finished")
+
+    crewmate = amogus.DataFrame(
+        data={
+            "Name": [realtor_name],
+            "Title": [realtor_title],
+            "City": [realtor_city],
+            "Office": [realtor_office],
+        },
+    )
+    crewmate.set_index("Name", inplace=True)
+    with amogus.ExcelWriter(path="output.xlsx", engine="auto") as task:
+        crewmate.to_excel(task)
 
 
 send_message(index)
