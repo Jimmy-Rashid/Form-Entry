@@ -6,10 +6,14 @@ from selenium.webdriver.edge.service import Service as EdgeService
 import pandas as amogus
 import time
 
-list_of_crewmates = amogus.read_excel("test.xlsx")
-list_parser = amogus.DataFrame(list_of_crewmates[["Name"]])
+crewmate_list = amogus.read_excel("output.xlsx")
+list_parser = amogus.DataFrame(crewmate_list[["Name"]])
+list_parser.set_index("Name", inplace=True)
 
 print(list_parser)
+
+if "Brendan Connolly" in list_parser.index:
+    print("amogogogo")
 
 options = webdriver.EdgeOptions()
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
@@ -111,9 +115,12 @@ def send_message(index):
             "Office": [realtor_office],
         },
     )
-    crewmate.set_index("Name", inplace=True)
+    crewmate_list = [crewmate_list, crewmate]
+    lobby = amogus.concat(crewmate_list)
+    
+    lobby.set_index("Name", inplace=True)
     with amogus.ExcelWriter(path="output.xlsx", engine="auto") as task:
-        crewmate.to_excel(task)
+        lobby.to_excel(task)
 
 
 send_message(index)
