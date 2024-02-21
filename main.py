@@ -6,7 +6,7 @@ from selenium.webdriver.edge.service import Service as EdgeService
 import pandas as amogus
 import time
 
-previous_lobby = amogus.read_excel("output.xlsx")
+previous_lobby = amogus.read_excel("master.xlsx")
 crewmate_list = []
 # list_parser = amogus.DataFrame(crewmate_list[["Name"]])
 # list_parser.set_index("Name", inplace=True)
@@ -93,9 +93,16 @@ def send_message(index, crewmate_list):
 
     message_entry.send_keys(message)
 
+    driver.implicitly_wait(1)
+
+    # Submits message to realtor
+    submit_button = driver.find_element(
+        by=By.CLASS_NAME, value="submit-button_topSpacing__VxWzR"
+    )
+    submit_button.click()
+
     close_button = driver.find_element(
-        by=By.CSS_SELECTOR,
-        value='[aria-label="Close"]',
+        by=By.CLASS_NAME, value="cta-modal_closeButton__jsMbk"
     )
     close_button.click()
 

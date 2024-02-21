@@ -1,0 +1,4 @@
+1. Make sure submit and close buttons are unhidden
+2. Run script
+3. Send output.xlsx and master.xlsx onto onedrive
+4. Hide submit and close buttons (Optional, for testing)
