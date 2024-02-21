@@ -18,7 +18,9 @@ df2 = amogus.DataFrame(
 )
 
 if name2 != name:
-    df1 = amogus.concat([df1, df2])
+    df3 = amogus.concat([df1, df2]).set_index("name")
+    with amogus.ExcelWriter(path="storage.xlsx", engine="auto") as task:
+        df3.to_excel(task)
 
 
-print(df1)
+print(df3)

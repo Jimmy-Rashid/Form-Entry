@@ -6,14 +6,15 @@ from selenium.webdriver.edge.service import Service as EdgeService
 import pandas as amogus
 import time
 
-crewmate_list = amogus.read_excel("output.xlsx")
-list_parser = amogus.DataFrame(crewmate_list[["Name"]])
-list_parser.set_index("Name", inplace=True)
+previous_lobby = amogus.read_excel("output.xlsx")
+crewmate_list = []
+# list_parser = amogus.DataFrame(crewmate_list[["Name"]])
+# list_parser.set_index("Name", inplace=True)
 
-print(list_parser)
+# print(list_parser)
 
-if "Brendan Connolly" in list_parser.index:
-    print("amogogogo")
+# if "Brendan Connolly" in list_parser.index:
+#     print("amogogogo")
 
 options = webdriver.EdgeOptions()
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
@@ -33,7 +34,7 @@ index = 1
 driver.implicitly_wait(1)
 
 
-def send_message(index):
+def send_message(index, crewmate_list):
     # Find the realtor's information
     card_parent_css = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_content__PJCfJ > a > div.agent-search-card_textContent__lMG47"
     card_parent = driver.find_element(by=By.CSS_SELECTOR, value=card_parent_css)
@@ -48,19 +49,16 @@ def send_message(index):
         by=By.CLASS_NAME, value="agent-search-card_title__rqNB0"
     )
     realtor_title = realtor_title_css.text
-    print(realtor_title)
 
     realtor_city_css = card_parent.find_element(
         by=By.CLASS_NAME, value="agent-search-card_city__dFVTO"
     )
     realtor_city = realtor_city_css.text
-    print(realtor_city)
 
     realtor_office_css = card_parent.find_element(
         by=By.CLASS_NAME, value="agent-search-card_office__Wqx3q"
     )
     realtor_office = realtor_office_css.text
-    print(realtor_office)
 
     # Press contact button
     contact_button_css = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
@@ -95,35 +93,31 @@ def send_message(index):
 
     message_entry.send_keys(message)
 
-    # close_button = driver.find_element(
-    #     by=By.CSS_SELECTOR,
-    #     value='[aria-label="Close"]',
-    # )
-    # close_button.click()
-
-    # if driver.find_elements(By.CSS_SELECTOR, contact_button_css):
-    #     index += 1
-    #     send_message(index)
-    # else:
-    #     print("finished")
-
-    crewmate = amogus.DataFrame(
-        data={
-            "Name": [realtor_name],
-            "Title": [realtor_title],
-            "City": [realtor_city],
-            "Office": [realtor_office],
-        },
+    close_button = driver.find_element(
+        by=By.CSS_SELECTOR,
+        value='[aria-label="Close"]',
     )
-    crewmate_list = [crewmate_list, crewmate]
-    lobby = amogus.concat(crewmate_list)
-    
-    lobby.set_index("Name", inplace=True)
-    with amogus.ExcelWriter(path="output.xlsx", engine="auto") as task:
-        lobby.to_excel(task)
+    close_button.click()
+
+    crewmate_list.append(
+        amogus.DataFrame(
+            {
+                "Name": [realtor_name],
+                "Title": [realtor_title],
+                "City": [realtor_city],
+                "Office": [realtor_office],
+            }
+        ),
+    )
+
+    if index < 12:
+        send_message(index + 1, crewmate_list)
 
 
-send_message(index)
+send_message(index, crewmate_list)
+
+lobby = amogus.concat(crewmate_list, ignore_index=True)
+lobby.to_excel("output.xlsx", index=False)
 
 time.sleep(10)
 
