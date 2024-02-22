@@ -25,8 +25,8 @@ driver = webdriver.Edge(
 driver.get("https://www.remax.ca/bc/vancouver-real-estate-agents?pageNumber=1")
 title = driver.title
 
-index = 1
 driver.implicitly_wait(1)
+index = 1
 
 
 def send_message(index, crewmate_list):
@@ -39,7 +39,7 @@ def send_message(index, crewmate_list):
     )
     realtor_name = realtor_name_css.text
     print(realtor_name)
-    
+
     if realtor_name not in impostors.index:
         realtor_title_css = card_parent.find_element(
             by=By.CLASS_NAME, value="agent-search-card_title__rqNB0"
@@ -58,7 +58,9 @@ def send_message(index, crewmate_list):
 
         # Press contact button
         contact_button_css = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
-        contact_button = driver.find_element(by=By.CSS_SELECTOR, value=contact_button_css)
+        contact_button = driver.find_element(
+            by=By.CSS_SELECTOR, value=contact_button_css
+        )
         contact_button.click()
 
         # Enter name
@@ -90,7 +92,9 @@ def send_message(index, crewmate_list):
         message_entry.send_keys(message)
 
         driver.implicitly_wait(1)
-        
+
+        # For sending message
+
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
         # Submits message to realtor
@@ -99,19 +103,21 @@ def send_message(index, crewmate_list):
         )
         submit_button.click()
 
+        driver.implicitly_wait(1)
+
         # For deployment
         close_button = driver.find_element(
             by=By.CLASS_NAME, value="cta-modal_closeButton__jsMbk"
         )
         close_button.click()
-        
+
         # # For testing
         # close_button = driver.find_element(
         #     by=By.CSS_SELECTOR,
         #     value='[aria-label="Close"]',
         # )
         # close_button.click()
-        
+
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
         crewmate_list.append(
@@ -124,6 +130,8 @@ def send_message(index, crewmate_list):
                 }
             ),
         )
+        
+        print(crewmate_list[-1])
 
     if index < 12:
         send_message(index + 1, crewmate_list)
@@ -131,9 +139,18 @@ def send_message(index, crewmate_list):
 
 send_message(index, crewmate_list)
 
+# For saving realtor names, offices, etc.
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 lobby = amogus.concat(crewmate_list, ignore_index=True)
 lobby.to_excel("output.xlsx", index=False)
 
-time.sleep(10)
+lobby_update = amogus.concat([previous_lobby, lobby], ignore_index=True)
+lobby_update.to_excel("master.xlsx", index=False)
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+time.sleep(3)
 
 driver.quit()
