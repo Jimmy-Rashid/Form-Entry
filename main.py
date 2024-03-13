@@ -11,6 +11,8 @@ impostors = amogus.DataFrame(previous_lobby[["Name"]])
 impostors.set_index("Name", inplace=True)
 crewmate_list = []
 
+daily_login = time.strftime("%x")
+
 options = webdriver.EdgeOptions()
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 options.add_argument("--enable-chrome-browser-cloud-management")
@@ -22,7 +24,18 @@ driver = webdriver.Edge(
     service=EdgeService(EdgeChromiumDriverManager().install()), options=options
 )
 
-driver.get("https://www.remax.ca/bc/vancouver-real-estate-agents?pageNumber=1")
+# Choose city
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# Burnaby Real Estate Agents
+driver.get("https://www.remax.ca/bc/burnaby-real-estate-agents?pageNumber=1")
+
+# Vancouver Real Estate Agents
+# driver.get(https://www.remax.ca/bc/vancouver-real-estate-agents?pageNumber=1)
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 title = driver.title
 
 driver.implicitly_wait(1)
@@ -38,7 +51,6 @@ def send_message(index, crewmate_list):
         by=By.CLASS_NAME, value="agent-search-card_name__FKvox"
     )
     realtor_name = realtor_name_css.text
-    print(realtor_name)
 
     if realtor_name not in impostors.index:
         realtor_title_css = card_parent.find_element(
@@ -55,6 +67,14 @@ def send_message(index, crewmate_list):
             by=By.CLASS_NAME, value="agent-search-card_office__Wqx3q"
         )
         realtor_office = realtor_office_css.text
+
+        # Allow some time to wait window closure
+
+        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+        time.sleep(3)
+
+        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
         # Press contact button
         contact_button_css = f"#__next > div.base-layout_root__gpH78.globalBodyPadding > div > div > div:nth-child({index}) > div.card-with-buttons_buttonWrapper__dvc9K > button.MuiButtonBase-root.MuiButton-root.commercialOutlined.agent-office-search-card-base_blueButton__unMZ4.MuiButton-text.remax-button_buttonText__saWK7 > span"
@@ -127,13 +147,20 @@ def send_message(index, crewmate_list):
                     "Title": [realtor_title],
                     "City": [realtor_city],
                     "Office": [realtor_office],
+                    "Day": [daily_login],
                 }
             ),
         )
-        
-        print(crewmate_list[-1])
 
-    if index < 12:
+        print(realtor_name)
+        print(realtor_title)
+        print(realtor_city)
+        print(realtor_office)
+        print(daily_login)
+        print(" ")
+
+    # Change number to control amount of entries
+    if index < 9:
         send_message(index + 1, crewmate_list)
 
 
